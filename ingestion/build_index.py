@@ -19,7 +19,7 @@ firecrawl = Firecrawl(api_key=api_key)
 print("Loading embedding model...")
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-url = "https://news.ycombinator.com"
+url = "https://openai.com"
 
 print("Scraping website...")
 result = firecrawl.scrape(url, formats=["markdown"])
@@ -28,7 +28,7 @@ markdown = result.markdown
 
 print("Splitting content into chunks...")
 
-chunks = []
+chunks = [] 
 
 chunk_size = 500
 
