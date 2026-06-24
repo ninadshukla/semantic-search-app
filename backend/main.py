@@ -1,9 +1,17 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from pydantic import BaseModel
 import chromadb
 from sentence_transformers import SentenceTransformer
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -31,7 +39,14 @@ def search(request: SearchRequest):
         n_results=3
     )
 
+    cleaned_results = []
+
+    for doc in results["documents"][0]:
+        cleaned_results.append(
+            doc.replace("\n", " ").strip()[:300]
+        )
+
     return {
         "query": request.query,
-        "results": results["documents"][0]
+        "results": cleaned_results
     }
