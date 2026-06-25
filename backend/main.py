@@ -28,6 +28,8 @@ collection = client.get_collection(
 
 class SearchRequest(BaseModel):
     query: str
+class InsightRequest(BaseModel):
+    snippets: list[str]
 
 @app.get("/")
 def home():
@@ -62,4 +64,17 @@ def search(request: SearchRequest):
     "query": request.query,
     "insight": f"Top results are mostly about {request.query}. Review the result cards below for the most relevant snippets.",
     "results": cleaned_results
-}
+} 
+@app.post("/insights")
+def get_insights(request: InsightRequest):
+    combined_text = " ".join(request.snippets)
+
+    summary = (
+        "These results are mainly about: "
+        + combined_text[:250]
+        + "..."
+    )
+
+    return {
+        "insight": summary
+    }

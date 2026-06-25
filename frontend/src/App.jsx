@@ -25,6 +25,18 @@ function SearchApp() {
 
       const data = await response.json();
       setResults(data.results);
+      const insightResponse = await fetch("http://127.0.0.1:8000/insights", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    snippets: data.results.map(result => result.snippet)
+  }),
+});
+
+const insightData = await insightResponse.json();
+setInsight(insightData.insight);
       setInsight(data.insight);
     } catch (error) {
       console.error(error);
