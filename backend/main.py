@@ -1,3 +1,4 @@
+from backend.auth import router as auth_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ from sentence_transformers import SentenceTransformer
 import re
 
 app = FastAPI()
+app.include_router(auth_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],

@@ -1,7 +1,8 @@
 import { useState } from "react";
+import LoginPage from "./LoginPage";
 import "./App.css";
 
-function App() {
+function SearchApp() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,8 +17,9 @@ function App() {
       const response = await fetch("http://127.0.0.1:8000/search", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-        },
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("token")}`,
+},
         body: JSON.stringify({ query }),
       });
 
@@ -67,6 +69,18 @@ function App() {
   ))}
 </div>
     </div>
+  );
+}
+
+function App() {
+  const [loggedIn, setLoggedIn] = useState(
+    !!localStorage.getItem("token")
+  );
+
+  return loggedIn ? (
+    <SearchApp />
+  ) : (
+    <LoginPage onLogin={() => setLoggedIn(true)} />
   );
 }
 
