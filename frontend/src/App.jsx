@@ -5,6 +5,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [insight, setInsight] = useState("");
 
   const search = async () => {
     if (!query.trim()) return;
@@ -22,6 +23,7 @@ function App() {
 
       const data = await response.json();
       setResults(data.results);
+      setInsight(data.insight);
     } catch (error) {
       console.error(error);
       alert("Could not connect to backend.");
@@ -48,12 +50,22 @@ function App() {
       </div>
 
       <div className="results">
-        {results.map((result, index) => (
-          <div key={index} className="card">
-            {result}
-          </div>
-        ))}
-      </div>
+  {results.length === 0 && !loading && (
+    <p className="empty">Search results will appear here.</p>
+  )}
+{insight && (
+  <div className="insight-box">
+    <h2>AI Insight</h2>
+    <p>{insight}</p>
+  </div>
+)}
+  {results.map((result) => (
+    <div className="result-card" key={result.id}>
+      <h3>{result.title}</h3>
+      <p>{result.snippet}</p>
+    </div>
+  ))}
+</div>
     </div>
   );
 }

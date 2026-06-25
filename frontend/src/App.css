@@ -53,4 +53,29 @@ button:hover {
   border-radius: 10px;
   margin-bottom: 20px;
   white-space: pre-wrap;
+} .empty {
+  text-align: center;
+  color: #9ca3af;
+  margin-top: 30px;
+}
+
+.result-card {
+  background: #1f2937;
+  padding: 22px;
+  border-radius: 14px;
+  margin-top: 22px;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.result-card h3 {
+  margin-top: 0;
+  color: #93c5fd;
+}
+.insight-box {
+  background: #0f172a;
+  border: 1px solid #38bdf8;
+  padding: 20px;
+  border-radius: 14px;
+  margin-top: 25px;
 }

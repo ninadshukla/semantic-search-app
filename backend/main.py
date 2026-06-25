@@ -3,11 +3,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import chromadb
 from sentence_transformers import SentenceTransformer
+import re
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,17 +37,27 @@ def search(request: SearchRequest):
 
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=3
+        n_results=5
     )
 
     cleaned_results = []
 
-    for doc in results["documents"][0]:
-        cleaned_results.append(
-            doc.replace("\n", " ").strip()[:300]
-        )
+    for i, doc in enumerate(results["documents"][0]):
+        text = doc.replace("\n", " ").replace("\\", " ")
+
+        text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+        text = re.sub(r"https?://\S+", "", text)
+        text = re.sub(r"[#_*`|>\[\]\(\)]", " ", text)
+        text = " ".join(text.split())
+
+        cleaned_results.append({
+            "id": i + 1,
+            "title": f"Result #{i + 1}",
+            "snippet": text[:400]
+        })
 
     return {
-        "query": request.query,
-        "results": cleaned_results
-    }
+    "query": request.query,
+    "insight": f"Top results are mostly about {request.query}. Review the result cards below for the most relevant snippets.",
+    "results": cleaned_results
+}
