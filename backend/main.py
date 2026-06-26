@@ -10,7 +10,7 @@ app = FastAPI()
 app.include_router(auth_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,7 +44,7 @@ def search(request: SearchRequest):
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=5,
-        include=["documents", "distances"]
+        include=["documents", "distances", "metadatas"]
     )
 
     cleaned_results = []
@@ -66,11 +66,14 @@ def search(request: SearchRequest):
             round((1.2 - distance) / 1.2 * 100, 2)
         )
 
+        metadata = results["metadatas"][0][i]
+
         cleaned_results.append({
-            "id": i + 1,
-            "title": f"Result #{i + 1}",
-            "snippet": text[:400],
-            "score": relevance_score
+        "id": i + 1,
+        "title": metadata.get("title", f"Result #{i+1}"),
+        "snippet": text[:400],
+        "score": relevance_score,
+        "source": metadata.get("source", "")
         })
 
     return {

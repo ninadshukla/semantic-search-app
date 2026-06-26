@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoginPage from "./LoginPage";
 import "./App.css";
 
@@ -10,7 +10,30 @@ function SearchApp() {
   const [hasSearched, setHasSearched] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const [minScore, setMinScore] = useState(0);
+  const [selectedSource, setSelectedSource] = useState("All Sources");
+  const [history, setHistory] = useState([]);
 
+  useEffect(() => {
+  const loadHistory = async () => {
+    const email = localStorage.getItem("email");
+
+    if (!email) return;
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/auth/history/${email}`
+      );
+
+      const data = await response.json();
+
+      setHistory(data.history || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  loadHistory();
+}, []);
   const search = async () => {
     if (!query.trim()) return;
 
@@ -32,7 +55,22 @@ function SearchApp() {
       const data = await response.json();
       const searchResults = data.results || [];
 
-      setResults(searchResults);
+      setResults(searchResults); 
+      const email = localStorage.getItem("email");
+
+if (email && query.trim()) {
+  await fetch("http://127.0.0.1:8000/auth/history", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      query: query,
+    }),
+  });
+  setHistory((prev) => [query, ...prev]);
+}
 
       if (searchResults.length > 0) {
         const insightResponse = await fetch("http://127.0.0.1:8000/insights", {
@@ -57,29 +95,55 @@ function SearchApp() {
       setLoading(false);
     }
   }; 
-  const filteredResults = results.filter((result) => result.score >= minScore);
+  const sourceFilteredResults =
+  selectedSource === "All Sources"
+    ? results
+    : results.filter((result) => result.title === selectedSource);
+
+const filteredResults = sourceFilteredResults.filter(
+  (result) => result.score >= minScore
+);
+
+const sources = [
+  "All Sources",
+  ...new Set(results.map((result) => result.title)),
+];
 
   return (
     <div className="container">
       <h1>Semantic Search App</h1>
 
       <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Ask something..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") search();
-          }}
-        />
+  <input
+    type="text"
+    placeholder="Ask something..."
+    value={query}
+    onChange={(e) => setQuery(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") search();
+    }}
+  />
 
-        <button onClick={search} disabled={loading}>
-          {loading ? "Searching..." : "Search"}
-        </button>
-      </div> 
-      <div className="filter-panel">
-  <label>Minimum relevance: {sliderValue}%</label>
+  {hasSearched && sources.length > 1 && (
+    <select
+      value={selectedSource}
+      onChange={(e) => setSelectedSource(e.target.value)}
+      className="source-select"
+    >
+      {sources.map((source) => (
+        <option key={source} value={source}>
+          {source}
+        </option>
+      ))}
+    </select>
+  )}
+
+  <button onClick={search} disabled={loading}>
+    {loading ? "Searching..." : "Search"}
+  </button>
+</div>
+      <div className="filter-panel"> 
+      <label>Minimum relevance: {sliderValue}%</label>
   <input
     type="range"
     min="0"
@@ -89,7 +153,21 @@ function SearchApp() {
     onMouseUp={() => setMinScore(sliderValue)}
     onTouchEnd={() => setMinScore(sliderValue)}
   />
-</div>
+</div> 
+{history.length > 0 && (
+  <div className="history-box">
+    <h3>Recent Searches</h3>
+
+    {history.slice(0, 5).map((item, index) => (
+      <button
+        key={index}
+        onClick={() => setQuery(item)}
+      >
+        {item}
+      </button>
+    ))}
+  </div>
+)}
 
       {loading && <div className="loading">🔍 Searching...</div>}
 
@@ -112,9 +190,19 @@ function SearchApp() {
         {!loading &&
           filteredResults.map((result) => (
             <div className="result-card" key={result.id}>
-              <h3>{result.title}</h3>
+              <h3>Result #{result.id} — {result.title}</h3>
               <p className="score">Relevance: {result.score}%</p>
-              <p>{result.snippet}</p>
+              <p>{result.snippet}</p> 
+              {result.source && (
+  <a
+    href={result.source}
+    target="_blank"
+    rel="noreferrer"
+    className="source-link"
+  >
+    View Source
+  </a>
+)}
             </div>
           ))}
       </div>
@@ -127,11 +215,22 @@ function App() {
     !!localStorage.getItem("token")
   );
 
-  return loggedIn ? (
+  const logout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("email");
+  setLoggedIn(false);
+};
+
+return loggedIn ? (
+  <>
+    <button className="logout-button" onClick={logout}>
+      Logout
+    </button>
     <SearchApp />
-  ) : (
-    <LoginPage onLogin={() => setLoggedIn(true)} />
-  );
+  </>
+) : (
+  <LoginPage onLogin={() => setLoggedIn(true)} />
+);
 }
 
 export default App;
