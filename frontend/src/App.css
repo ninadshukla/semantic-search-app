@@ -79,3 +79,29 @@ button:hover {
   border-radius: 14px;
   margin-top: 25px;
 }
+.loading,
+.empty-state {
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  font-size: 20px;
+  color: white;
+  border: 1px solid #3b82f6;
+  border-radius: 10px;
+}
+.score {
+  color: #93c5fd;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.filter-panel {
+  margin: 20px auto;
+  max-width: 650px;
+  color: white;
+  text-align: center;
+}
+
+.filter-panel input {
+  width: 100%;
+  margin-top: 10px;
+}
