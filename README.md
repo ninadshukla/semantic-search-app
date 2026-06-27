@@ -144,15 +144,12 @@ http://localhost:5173
 
 Through this project I learned:
 
-- Full-stack application development
-- Building REST APIs with FastAPI
-- JWT authentication and authorization
-- Vector databases and semantic search
-- React state management
-- Database design with SQLite
-- Error handling and integration testing
-- AI application architecture
-
+- Built a complete full-stack application integrating React and FastAPI.
+- Implemented semantic search using sentence embeddings and vector similarity instead of traditional keyword matching.
+- Learned secure authentication practices using JWT tokens and bcrypt password hashing.
+- Debugged API communication and CORS issues while integrating frontend and backend services.
+- Designed a two-stage pipeline consisting of offline ingestion and real-time retrieval.
+- Improved understanding of vector databases, embeddings, and AI application architecture.
 ---
 
 ## Author
