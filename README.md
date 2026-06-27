@@ -20,7 +20,11 @@ A full-stack AI-powered semantic search engine that crawls website content, gene
 - Responsive React frontend
 
 ---
+## Architecture Diagram
 
+![Architecture Diagram](screenshots/SEMANTIC-SEARCH-ARCHITECTURE.png)
+
+---
 ## Tech Stack
 
 | Layer | Technologies |
