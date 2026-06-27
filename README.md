@@ -114,16 +114,15 @@ http://localhost:5173
 
 ### Login Page
 
-(Add screenshot here)
+![Login Page](screenshots/login-page.png)
 
 ### Search Interface
 
-(Add screenshot here)
+![Search Interface](screenshots/search-page.png)
 
 ### Search Results
 
-(Add screenshot here)
-
+![Search Results](screenshots/results-page.png)
 ---
 
 ## Future Improvements
