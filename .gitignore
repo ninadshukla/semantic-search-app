@@ -12,4 +12,7 @@ venv/
 ingestion/chroma_store/
 
 # macOS files
-.DS_Store
+.DS_Store 
+
+# Local SQLite database 
+users.db
