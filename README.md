@@ -76,7 +76,7 @@ Website Content / Documents
 ### Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/semantic-search-app.git
+git clone https://github.com/ninadshukla/semantic-search-app.git
 cd semantic-search-app
 ```
 
